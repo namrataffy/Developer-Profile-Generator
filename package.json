@@ -1,0 +1,25 @@
+{
+  "name": "Developer-Profile-Generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/namrataffy/Developer-Profile-Generator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/namrataffy/Developer-Profile-Generator/issues"
+  },
+  "homepage": "https://github.com/namrataffy/Developer-Profile-Generator#readme",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "electron-pdf": "^4.0.8",
+    "inquirer": "^7.0.1"
+  }
+}
