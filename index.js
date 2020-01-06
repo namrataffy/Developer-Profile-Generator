@@ -10,6 +10,8 @@ var util = require("util");
 // });
 
 const writeFileAsync = util.promisify(fs.writeFile);
+var colorChoice;
+let textColor = "white";
 
 function prompt() {
   return inquirer.prompt([
@@ -28,8 +30,8 @@ function prompt() {
 
 prompt().then(function(data) {
   // console.log(data);
-
   var urlQ = "https://api.github.com/users/" + data.username;
+  colorChoice = data.color;
 
   axios.get(urlQ).then(response => {
     // console.log(response);
@@ -42,9 +44,13 @@ prompt().then(function(data) {
       numberRepo: response.data.public_repos,
       numberFollowers: response.data.followers,
       numberFollowing: response.data.following,
-      location: response.data.location
+      blog: response.data.blog,
+      location: response.data.location,
+      stars: response.data.public_gists,
+      name: response.data.name
     };
     console.log(dataObj);
+
     let html = generateHTML(dataObj);
 
     return writeFileAsync("index.html", html);
@@ -56,8 +62,10 @@ prompt().then(function(data) {
     // });
   });
 });
-
 function generateHTML(dataObj) {
+  if (colorChoice == "white" || colorChoice == "yellow") {
+    textColor = "black";
+  }
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -68,21 +76,69 @@ function generateHTML(dataObj) {
   <title>Document</title>
 </head>
 <body>
-  <div class="jumbotron jumbotron-fluid">
+<style>
+body{
+  color:${textColor}
+}
+.card{background-color: ${colorChoice}}
+.cardSmall{
+  width:50%;
+  float: left;
+}
+.imager{
+  border-radius:50%;
+}
+a{
+  display:inline-block;
+}
+</style>
   <div class="container">
-    <h1 class="display-4">Hi! My name is ${dataObj.location}</h1>
-    <p class="lead">I am from ${dataObj.bio}.</p>
-    <h3>Example heading <span class="badge badge-secondary">Contact Me</span></h3>
-    <ul class="list-group">
-      <li class="list-group-item">My GitHub username is ${dataObj.userName}</li>
-      <li class="list-group-item">LinkedIn: ${dataObj.linkToGit}</li>
-    </ul>
+    <div class="card text-center  mt-4 mb-2">
+      <div class = "card-body">
+      <img class = "imager" src = ${dataObj.profImg} width = 30% id="prof" alt="profileimg">
+      <h1>Hello my name is ${dataObj.name}</h1>
+      <p>${dataObj.bio}</p>
+      <a href="${dataObj.linkToGit}" >GitHub</a>
+      <a class = "ml-2"  href="${dataObj.blog}" >Blog</a>
+      <a class = "ml-2"  href="https://www.google.com/maps/place/${dataObj.location}" >${dataObj.location}</a>
+
+
+      </div>
+    </div>
+
+    <div class="card cardSmall text-center  mb-3">
+    <div class="card-body">
+      <h2>Public Repositories</h2>
+      <h2>${dataObj.numberRepo}</h2>
+    </div>
+  </div>
+  <div class="card cardSmall text-center  mb-3">
+  <div class="card-body">
+    <h2>Followers</h2>
+    <h2>${dataObj.numberFollowers}</h2>
   </div>
 </div>
+<div class="card cardSmall text-center  mb-3">
+<div class="card-body">
+  <h2>Following</h2>
+  <h2>${dataObj.numberFollowing}</h2>
+</div>
+</div>
+<div class="card cardSmall text-center  mb-3">
+<div class="card-body">
+  <h2>GitHub Stars</h2>
+  <h2>${dataObj.stars}</h2>
+</div>
+</div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 </html>`;
 }
 
+// convert pdf
 // .then(function() {
 //   conversion({ html: "<h1>Hello World</h1>" }, function(err, result) {
 //     if (err) {
