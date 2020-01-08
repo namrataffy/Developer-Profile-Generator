@@ -5,10 +5,6 @@ const convertFactory = require("electron-html-to");
 var ElectronPDF = require("electron-pdf");
 var util = require("util");
 
-// var conversion = convertFactory({
-//   converterPath: convertFactory.converters.PDF
-// });
-
 const writeFileAsync = util.promisify(fs.writeFile);
 var colorChoice;
 let textColor = "white";
@@ -40,11 +36,11 @@ prompt().then(function(data) {
     .get(urlQ)
     .then(response => {
       // console.log(response);
-      // console.log(response.data);
+      //console.log(response.data);
       dataObj = {
         profImg: response.data.avatar_url || "No profile image",
         userName: response.data.login,
-        linkToGit: response.data.url,
+        linkToGit: response.data.html_url,
         bio: response.data.bio || "No bio",
         numberRepo: response.data.public_repos,
         numberFollowers: response.data.followers,
@@ -54,22 +50,22 @@ prompt().then(function(data) {
         stars: response.data.public_gists,
         name: response.data.name
       };
-      console.log(dataObj);
+      //console.log(dataObj);
 
       const htmlF = generateHTML(dataObj);
-      writeFileAsync("index.html", htmlF);
+      //writeFileAsync("index.html", htmlF);
       return htmlF;
 
       // maps link thing -- https://www.google.com/maps/search/?api=1&query= (separate with +)
     })
     .then(res => {
       conversion({ html: res }, function(err, result) {
-        console.log(res);
+        //console.log(res);
 
         if (err) {
           return console.error(err);
         }
-        result.stream.pipe(fs.createWriteStream("thing2.pdf"));
+        result.stream.pipe(fs.createWriteStream("profile.pdf"));
         conversion.kill();
       });
     });
@@ -94,7 +90,9 @@ function generateHTML(dataObj) {
   body{
     color:${textColor};
   }
-  .card{background-color: ${colorChoice};}
+  .card{
+    background-color: ${colorChoice};
+  }
   .cardSmall{
     width:50%;
     float: left;
@@ -105,6 +103,7 @@ function generateHTML(dataObj) {
   a{
     display:inline-block;
   }
+  @media print { body {               -webkit-print-color-adjust: exact;            }         }
   </style>
     <div class="container">
       <div class="card text-center  mt-4 mb-3">
@@ -112,7 +111,7 @@ function generateHTML(dataObj) {
         <img class = "imager" src = ${dataObj.profImg} width = 30% id="prof" alt="profileimg">
         <h1>Hello my name is ${dataObj.name}</h1>
         <p>${dataObj.bio}</p>
-        <a href="${dataObj.linkToGit}" >GitHub</a>
+        <a href="${dataObj.linkToGit}" >GitHub: ${dataObj.userName}</a>
         <a class = "ml-2"  href="${dataObj.blog}" >Blog</a>
         <a class = "ml-2"  href="https://www.google.com/maps/place/${dataObj.location}" >${dataObj.location}</a>
   
