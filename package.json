@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/namrataffy/Developer-Profile-Generator#readme",
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "electron-html-to": "^2.6.0",
     "electron-pdf": "^4.0.8",
     "inquirer": "^7.0.1",
